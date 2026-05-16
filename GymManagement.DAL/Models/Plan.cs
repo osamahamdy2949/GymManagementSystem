@@ -1,4 +1,4 @@
-﻿namespace GymManagement.Models
+﻿namespace GymManagement.DaL.Models
 {
     public class Plan
     {

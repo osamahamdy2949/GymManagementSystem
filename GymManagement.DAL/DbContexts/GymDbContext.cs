@@ -1,4 +1,4 @@
-﻿using GymManagement.Models;
+﻿using GymManagement.DaL.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymManagement.DbContexts
