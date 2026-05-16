@@ -1,4 +1,4 @@
-using GymManagement.Models;
+using GymManagement.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
