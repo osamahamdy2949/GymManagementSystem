@@ -26,7 +26,12 @@ namespace GymManagement.Repositories.Classes
 
         public async Task<int> DeletePlanAsync(int id, CancellationToken ct = default)
         {
-            _context.Remove(new Plan { Id = id });
+            var plan = await _context.Plans.FindAsync(id);
+            if (plan == null)
+            {
+                return 0;
+            }
+            _context.Plans.Remove(plan);
             return await _context.SaveChangesAsync(ct);
         }
 
