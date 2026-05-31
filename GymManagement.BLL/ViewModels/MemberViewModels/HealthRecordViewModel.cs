@@ -19,5 +19,6 @@ namespace GymManagement.BLL.ViewModels.MemberViewModels
         [Required(ErrorMessage = "Blood Type Is Required")]
         public BloodType BloodType { get; set; } = default!;
         public string? Note { get; set; } = default!;
+
     }
 }

@@ -1,7 +1,8 @@
-﻿using GymManagement.BLL.Services.Classes;
+﻿using GymManagement.BLL.ViewModels.MemberViewModels;
+using GymManagement.BLL.Services.Classes;
 using GymManagement.BLL.Services.Interfaces;
-using GymManagement.BLL.ViewModels.MemberViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Gym.BLL.ViewModels.MemberViewModels;
 
 namespace GymManagement.PL.Controllers
 {
@@ -34,7 +35,7 @@ namespace GymManagement.PL.Controllers
                 return View(nameof(Create), model);
             }
 
-            var result = await _memberService.CreateMemberAsync(model, ct);
+            var result = await _memberService.CreateMembreAsync(model, ct);
 
             if (result)
                 TempData["SuccessMessage"] = "Member Created Succefully";
@@ -45,39 +46,76 @@ namespace GymManagement.PL.Controllers
         }
 
         //MemberDetails(int id) - Displays member profile page 
-        public IActionResult MemberDetails(int id)
+        public async Task<IActionResult> MemberDetails(int id, CancellationToken ct)
         {
-            return View();
+            var member = await _memberService.GetMemberByIdAsync(id, ct: ct);
+
+            return View(member);
         }
 
         //HealthRecordDetails(int id) - Shows health record page
-        public IActionResult HealthRecordDetails(int id)
+        public async Task<IActionResult> HealthRecordDetails(int id, CancellationToken ct)
         {
-            return View();
+            var healthRecord = await _memberService.GetHealthRecordByMemberIdAsync(id, ct);
+
+            return View(healthRecord);
         }
 
         //MemberEdit(int id) - Displays edit form 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id, CancellationToken ct)
         {
-            return View();
+            var member = await _memberService.GetMemberToUpdateAsync(id, ct);
+            if (member is null)
+            {
+                TempData["FailedMessage"] = "Member Not Found";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(member);
         }
 
         //MemberEdit() - Processes update 
-        public IActionResult EditMember()
+        [HttpPost]
+        public async Task<IActionResult> EditMember(UpdateMemberViewModel model, CancellationToken ct)
         {
-            return View();
+            if (!ModelState.IsValid)
+            {
+                return View(nameof(Edit), model);
+            }
+
+            var result = await _memberService.UpdateMemberAsync(model.Id, model, ct);
+
+            if (result)
+                TempData["SuccessMessage"] = "Member Updated Successfully";
+            else
+                TempData["FailedMessage"] = "Failed To Update Member";
+
+            return RedirectToAction(nameof(Index));
         }
 
         //Delete(int id) - Shows deletion confirmation page 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteMember(int id, CancellationToken ct)
         {
-            return View();
+            var member = await _memberService.GetMemberByIdAsync(id, ct);
+            if (member is null)
+            {
+                TempData["FailedMessage"] = "Member Not Found";
+                return RedirectToAction(nameof(Index));
+            }
+            return View(member);
         }
 
         //DeleteConfirmed(int id) - Processes deletion
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, CancellationToken ct)
         {
-            return View();
+            var result = await _memberService.DeleteMemberAsync(id, ct);
+
+            if (result)
+                TempData["SuccessMessage"] = "Member Deleted Successfully";
+            else
+                TempData["FailedMessage"] = "Failed To Delete Member";
+
+            return RedirectToAction(nameof(Index));
         }
 
     }

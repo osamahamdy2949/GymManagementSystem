@@ -1,10 +1,13 @@
-﻿+f<!DOCTYPE html>
+﻿@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" />
-    <link rel="icon" type="image/x-icon" href="~/FavIcon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@400..800&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
@@ -14,59 +17,125 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <!-- ^ Our main css file -->
     <link rel="stylesheet" href="~/css/style.css" />
-    <title>Power fitness | Home</title>
+    <!--Icon-->
+    <link rel="icon" type="image/png" href="~/favicon.ico"/>
+    <title>Power fitness | @ViewData["Title"]</title>
 </head>
 <body>
     <header>
-        <!-- ^ navbar -->
-        <nav class="navbar navbar-expand-lg bg-white my-3">
+        <nav class="navbar navbar-expand-lg bg-white shadow-sm py-3">
             <div class="container">
-                <a class="navbar-brand" href="#">
-                    <img src="~/images/logo.jpg" alt="" />
+
+                <!-- Logo -->
+                <a class="navbar-brand"
+                       asp-controller="Home"
+                       asp-action="Index">
+
+                    <img src="~/images/logo.jpg"
+                         alt="Logo"
+                         width="70" />
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav m-auto mb-2 mb-lg-0 mt-3 mt-lg-0">
-                        <li class="nav-item">
-                            <li class="nav-item">
-                                <a class="nav-link active px-3 py-2 mx-2 fw-bolder fs-5" aria-current="page" href="#">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5" aria-current="page" href="#">Members</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5" aria-current="page" href="#">Trainers</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5" aria-current="page" href="#">Sessions</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5" aria-current="page" href="#">Plans</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5" aria-current="page" href="#">Memberships</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5" aria-current="page" href="#">Sessions Schedule</a>
-                            </li>
-                            <li class="nav-item">
-                                <form asp-action="Logout" asp-controller="Account" method="post" class="d-inline">
-                                    <button type="submit"
-                                            class="btn btn-link nav-link px-3 py-2 mx-2 fw-bolder fs-5 text-black-alternative">
-                                        Logout
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+                <!-- Navbar Items -->
+                <div class="collapse navbar-collapse"
+                     id="navbarSupportedContent">
 
-        </header>
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+
+                        <!-- Home -->
+                        <li class="nav-item">
+                            <a asp-controller="Home"
+                                   asp-action="Index"
+                                   class="nav-link px-3 fw-bold fs-5 @(currentController == "Home" ? "active text-primary" : "text-dark")">
+                                Home
+                            </a>
+                        </li>
+
+                        <!-- Members -->
+                        <li class="nav-item">
+                            <a asp-controller="Members"
+                                   asp-action="Index"
+                                   class="nav-link px-3 fw-bold fs-5 @(currentController == "Members" ? "active text-primary" : "text-dark")">
+                                Members
+                            </a>
+                        </li>
+
+                        <!-- Trainers -->
+                        <li class="nav-item">
+                            <a asp-controller="Trainers"
+                                   asp-action="Index"
+                                   class="nav-link px-3 fw-bold fs-5 @(currentController == "Trainers" ? "active text-primary" : "text-dark")">
+                                Trainers
+                            </a>
+                        </li>
+
+                        <!-- Sessions -->
+                        <li class="nav-item">
+                            <a asp-controller="Sessions"
+                                   asp-action="Index"
+                                   class="nav-link px-3 fw-bold fs-5 @(currentController == "Sessions" ? "active text-primary" : "text-dark")">
+                                Sessions
+                            </a>
+                        </li>
+
+                        <!-- Plans -->
+                        <li class="nav-item">
+                            <a asp-controller="Plans"
+                                   asp-action="Index"
+                                   class="nav-link px-3 fw-bold fs-5 @(currentController == "Plans" ? "active text-primary" : "text-dark")">
+                                Plans
+                            </a>
+                        </li>
+
+                        <!-- Memberships -->
+                        <li class="nav-item">
+                            <a asp-controller="Memberships"
+                                   asp-action="Index"
+                                   class="nav-link px-3 fw-bold fs-5 @(currentController == "Memberships" ? "active text-primary" : "text-dark")">
+                                Memberships
+                            </a>
+                        </li>
+
+                        <!-- Session Schedule -->
+                        <li class="nav-item">
+                            <a asp-controller="SessionSchedules"
+                                   asp-action="Index"
+                                   class="nav-link px-3 fw-bold fs-5 @(currentController == "SessionSchedules" ? "active text-primary" : "text-dark")">
+                                Schedule
+                            </a>
+                        </li>
+
+                        <!-- Logout -->
+                        <li class="nav-item">
+                            <form asp-controller="Account"
+                                  asp-action="Logout"
+                                  method="post"
+                                  class="d-inline">
+
+                                <button type="submit"
+                                        class="btn btn-link nav-link px-3 fw-bold fs-5 text-dark text-decoration-none">
+                                    Logout
+                                </button>
+                            </form>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
