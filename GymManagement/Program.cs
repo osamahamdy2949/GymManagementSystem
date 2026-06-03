@@ -26,6 +26,8 @@ namespace GymManagement
             builder.Services.AddScoped<IPlanServices, PlanServices>();
             builder.Services.AddScoped<ITrainerServices, TrainerServices>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<ISessionRepository, SessionRepository>();
+            builder.Services.AddScoped<ISessionServices, SessionServices>();
 
 
             var app = builder.Build();
