@@ -20,6 +20,8 @@ namespace GymManagement.DAL.Data.Configurations
                    .HasDefaultValueSql("GetDate()");
 
             builder.HasKey(b => new { b.MemberId, b.SessionId });
+
+            builder.HasData(Seeder.GetBookings());
         }
     }
 }

@@ -19,13 +19,7 @@ namespace GymManagement.DAL.Data.Configurations
             builder.Property(c=> c.CreatedAt)
                    .HasDefaultValueSql("GETDATE()");
 
-            builder.HasData(
-                new Category { Id = 1, CategoryName = "Cardio" },
-                new Category { Id = 2, CategoryName = "Strength" },
-                new Category { Id = 3, CategoryName = "Yoga" },
-                new Category { Id = 4, CategoryName = "Boxing" },
-                new Category { Id = 5, CategoryName = "CrossFit" }
-            );
+            builder.HasData(Seeder.GetCategories());
         }
     }
 }

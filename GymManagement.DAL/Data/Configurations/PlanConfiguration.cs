@@ -27,6 +27,8 @@ namespace GymManagement.DAL.Data.Configurations
             {
                 tb.HasCheckConstraint("PlanDurationCheck", "DurationDays Between 1 AND 365");
             });
+
+            builder.HasData(Seeder.GetPlans());
         }
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymManagement.DAL.Data.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    [Migration("20260529164327_HealthRecord&MemberPhoto")]
-    partial class HealthRecordMemberPhoto
+    [Migration("20260603005900_SeedData")]
+    partial class SeedData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,6 +157,28 @@ namespace GymManagement.DAL.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("HealthRecords");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BloodType = "Oplus",
+                            CreatedAt = new DateTime(2026, 6, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Height = 180.5m,
+                            MemberId = 1,
+                            Note = "No issues",
+                            Weight = 80.2m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BloodType = "Aplus",
+                            CreatedAt = new DateTime(2025, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Height = 165.0m,
+                            MemberId = 2,
+                            Note = "Allergic to nuts",
+                            Weight = 60.0m
+                        });
                 });
 
             modelBuilder.Entity("GymManagement.DAL.Data.Models.Member", b =>
@@ -214,6 +236,28 @@ namespace GymManagement.DAL.Data.Migrations
 
                             t.HasCheckConstraint("CK_GymUser_Phone", "PhoneNumber LIKE '010[0-9]%' or PhoneNumber LIKE '011[0-9]%' or PhoneNumber LIKE '012[0-9]%' or PhoneNumber LIKE '015[0-9]%' AND LEN(PhoneNumber) >= 10 AND LEN(PhoneNumber) <= 15");
                         });
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateOfBirth = new DateOnly(1995, 5, 15),
+                            Email = "m.salah@example.com",
+                            Gender = "Male",
+                            Name = "Mohamed Salah",
+                            PhoneNumber = "01000000010"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateOfBirth = new DateOnly(1998, 3, 22),
+                            Email = "aya.ibrahim@example.com",
+                            Gender = "Female",
+                            Name = "Aya Ibrahim",
+                            PhoneNumber = "01000000011"
+                        });
                 });
 
             modelBuilder.Entity("GymManagement.DAL.Data.Models.Membership", b =>
@@ -247,6 +291,24 @@ namespace GymManagement.DAL.Data.Migrations
                     b.HasIndex("PlanId");
 
                     b.ToTable("Memberships");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 6, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateOnly(2026, 7, 3),
+                            MemberId = 1,
+                            PlanId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 6, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateOnly(2026, 7, 3),
+                            MemberId = 2,
+                            PlanId = 2
+                        });
                 });
 
             modelBuilder.Entity("GymManagement.DAL.Data.Models.Plan", b =>
@@ -290,6 +352,38 @@ namespace GymManagement.DAL.Data.Migrations
                     b.ToTable("Plans", t =>
                         {
                             t.HasCheckConstraint("PlanDurationCheck", "DurationDays Between 1 AND 365");
+                        });
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Basic monthly plan",
+                            DurationDays = 30,
+                            IsActive = true,
+                            Name = "Basic",
+                            Price = 19.99m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Standard 3-month plan",
+                            DurationDays = 90,
+                            IsActive = true,
+                            Name = "Standard",
+                            Price = 49.99m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Yearly premium plan",
+                            DurationDays = 365,
+                            IsActive = true,
+                            Name = "Premium",
+                            Price = 199.99m
                         });
                 });
 
@@ -337,6 +431,30 @@ namespace GymManagement.DAL.Data.Migrations
                             t.HasCheckConstraint("CK_Session_Capacity", "Capacity BETWEEN 1 AND 25");
 
                             t.HasCheckConstraint("CK_Session_Dates", "StartDate < EndDate");
+                        });
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Capacity = 15,
+                            CategoryId = 1,
+                            CreatedAt = new DateTime(2026, 6, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Morning Cardio",
+                            EndDate = new DateTime(2026, 7, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2026, 6, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Capacity = 12,
+                            CategoryId = 3,
+                            CreatedAt = new DateTime(2026, 6, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Evening Yoga",
+                            EndDate = new DateTime(2026, 9, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2026, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TrainerId = 2
                         });
                 });
 
@@ -398,6 +516,30 @@ namespace GymManagement.DAL.Data.Migrations
                             t.HasCheckConstraint("CK_GymUser_Phone", "PhoneNumber LIKE '010[0-9]%' or PhoneNumber LIKE '011[0-9]%' or PhoneNumber LIKE '012[0-9]%' or PhoneNumber LIKE '015[0-9]%' AND LEN(PhoneNumber) >= 10 AND LEN(PhoneNumber) <= 15")
                                 .HasName("CK_GymUser_Phone1");
                         });
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateOfBirth = new DateOnly(1990, 1, 1),
+                            Email = "ahmed.ali@example.com",
+                            Gender = "Male",
+                            Name = "Ahmed Ali",
+                            PhoneNumber = "01000000001",
+                            Speciality = "GeneralFitness"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateOfBirth = new DateOnly(1992, 6, 15),
+                            Email = "sara.hassan@example.com",
+                            Gender = "Female",
+                            Name = "Sara Hassan",
+                            PhoneNumber = "01000000002",
+                            Speciality = "Yoga"
+                        });
                 });
 
             modelBuilder.Entity("GymManagement.DAL.Data.Models.Booking", b =>
@@ -456,6 +598,22 @@ namespace GymManagement.DAL.Data.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("MemberId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    MemberId = 1,
+                                    BuildingNumber = 10,
+                                    City = "Cairo",
+                                    Street = "El Nile St"
+                                },
+                                new
+                                {
+                                    MemberId = 2,
+                                    BuildingNumber = 5,
+                                    City = "Cairo",
+                                    Street = "Tahrir Ave"
+                                });
                         });
 
                     b.Navigation("Address")
@@ -465,7 +623,7 @@ namespace GymManagement.DAL.Data.Migrations
             modelBuilder.Entity("GymManagement.DAL.Data.Models.Membership", b =>
                 {
                     b.HasOne("GymManagement.DAL.Data.Models.Member", "Member")
-                        .WithMany("Assignations")
+                        .WithMany("Memberships")
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -526,6 +684,22 @@ namespace GymManagement.DAL.Data.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("TrainerId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    TrainerId = 1,
+                                    BuildingNumber = 10,
+                                    City = "Cairo",
+                                    Street = "El Nile St"
+                                },
+                                new
+                                {
+                                    TrainerId = 2,
+                                    BuildingNumber = 5,
+                                    City = "Cairo",
+                                    Street = "Tahrir Ave"
+                                });
                         });
 
                     b.Navigation("Address")
@@ -539,12 +713,12 @@ namespace GymManagement.DAL.Data.Migrations
 
             modelBuilder.Entity("GymManagement.DAL.Data.Models.Member", b =>
                 {
-                    b.Navigation("Assignations");
-
                     b.Navigation("Book");
 
                     b.Navigation("HealthRecord")
                         .IsRequired();
+
+                    b.Navigation("Memberships");
                 });
 
             modelBuilder.Entity("GymManagement.DAL.Data.Models.Plan", b =>

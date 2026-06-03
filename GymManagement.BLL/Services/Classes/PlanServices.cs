@@ -13,16 +13,16 @@ namespace GymManagement.BLL.Services.Classes
 {
     public class PlanServices : IPlanServices
     {
-        private readonly IGenericRepository<Plan> _planRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PlanServices(IGenericRepository<Plan> planRepository) 
-        { 
-            _planRepository = planRepository; 
+        public PlanServices(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
         }
-        
+
         public async Task<IEnumerable<PlanViewModel>> GetAllPlansAsync(CancellationToken ct = default)
         {
-            var plans = await _planRepository.GetAllAsync(ct:ct);
+            var plans = await _unitOfWork.GetRepository<Plan>().GetAllAsync(ct: ct);
 
             if (!plans.Any())
                 return Enumerable.Empty<PlanViewModel>();
@@ -41,7 +41,7 @@ namespace GymManagement.BLL.Services.Classes
 
         public async Task<PlanDetailsViewModel?> GetPlanByIdAsync(int id, CancellationToken ct = default)
         {
-            var plan = await _planRepository.GetByIdAsync(id, false, ct);
+            var plan = await _unitOfWork.GetRepository<Plan>().GetByIdAsync(id, false, ct);
             if (plan == null)
                 return null;
 
@@ -57,9 +57,12 @@ namespace GymManagement.BLL.Services.Classes
 
         public async Task<UpdatePlanViewModel?> GetPlanToUpdateAsync(int id, CancellationToken ct = default)
         {
-            var plan = await _planRepository.GetByIdAsync(id, true, ct);
+            var plan = await _unitOfWork.GetRepository<Plan>().GetByIdAsync(id, true, ct);
 
-            if (plan is null)
+            if (plan is null || !plan.IsActive)
+                return null;
+
+            if (await HasActiveMembershipsAsync(id, ct))
                 return null;
 
             return new UpdatePlanViewModel()
@@ -74,9 +77,12 @@ namespace GymManagement.BLL.Services.Classes
 
         public async Task<bool> UpdatePlanAsync(int id, UpdatePlanViewModel model, CancellationToken ct = default)
         {
-            var plan = await _planRepository.GetByIdAsync(id, true, ct);
+            var plan = await _unitOfWork.GetRepository<Plan>().GetByIdAsync(id, true, ct);
 
             if (plan is null)
+                return false;
+
+            if(await HasActiveMembershipsAsync(id, ct))
                 return false;
 
             plan.Id = id;
@@ -84,24 +90,37 @@ namespace GymManagement.BLL.Services.Classes
             plan.DurationDays = model.DurationDays;
             plan.Description = model.Description;
             plan.Price = model.Price;
+            plan.UpdatedAt = DateTime.Now;
 
-            var result = await _planRepository.UpdateAsync(plan, ct);
+            _unitOfWork.GetRepository<Plan>().Update(plan);
+            var result = await _unitOfWork.SaveChangesAsync(ct);
 
             return result > 0 ? true : false;
         }
 
         public async Task<bool> UpdateStatusAsync(int id, CancellationToken ct = default)
         {
-            var plan = await _planRepository.GetByIdAsync(id, true, ct);
+            var plan = await _unitOfWork.GetRepository<Plan>().GetByIdAsync(id, true, ct);
 
             if (plan is null)
                 return false;
 
-            plan.IsActive = !plan.IsActive;
+            if(!plan.IsActive && await HasActiveMembershipsAsync(id, ct))
+                return false;
 
-            var result = await _planRepository.UpdateAsync(plan, ct);
+            plan.IsActive = !plan.IsActive;
+            plan.UpdatedAt = DateTime.Now;
+
+            _unitOfWork.GetRepository<Plan>().Update(plan);
+            var result = await _unitOfWork.SaveChangesAsync(ct);
 
             return result > 0 ? true : false;
+        }
+
+        //Helper method to check if Plan has Active Membership or not
+        public async Task<bool> HasActiveMembershipsAsync(int planId, CancellationToken ct = default)
+        {
+            return await _unitOfWork.GetRepository<Membership>().AnyAsync(m => m.PlanId == planId && m.EndDate > DateOnly.FromDateTime(DateTime.Now), ct: ct);
         }
     }
 }

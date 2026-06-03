@@ -17,6 +17,8 @@ namespace GymManagement.DAL.Data.Configurations
 
             builder.Property(a => a.CreatedAt)
                    .HasColumnName("StartDate");
+
+            builder.HasData(Seeder.GetMemberships());
         }
     }
 }

@@ -13,6 +13,6 @@ namespace GymManagement.DAL.Data.Models
         //Navigation properties
         public HealthRecord HealthRecord { get; set; } = default!;
         public ICollection<Booking> Book { get; set; } = new List<Booking>();
-        public ICollection<Membership> Assignations { get; set; } = new List<Membership>();
+        public ICollection<Membership> Memberships { get; set; } = new List<Membership>();
     }
 }
