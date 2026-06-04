@@ -5,6 +5,7 @@ using GymManagement.DAL.Data.DbContexts;
 using GymManagement.DAL.Repositories.Classes;
 using GymManagement.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace GymManagement
 {
@@ -16,6 +17,7 @@ namespace GymManagement
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
             builder.Services.AddDbContext<GymDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));

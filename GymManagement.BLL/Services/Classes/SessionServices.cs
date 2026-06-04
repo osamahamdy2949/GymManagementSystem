@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using GymManagement.BLL.Services.Interfaces;
+﻿using GymManagement.BLL.Services.Interfaces;
 using GymManagement.BLL.ViewModels.SessionViewModels;
 using GymManagement.DAL.Repositories.Interfaces;
 using System;
@@ -15,23 +14,28 @@ namespace GymManagement.BLL.Services.Classes
     {
 
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public SessionServices(IUnitOfWork unitOfWork, IMapper mapper)
+        public SessionServices(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<IEnumerable<SessionViewModel>?> GetAllSessionsAsync(CancellationToken ct = default)
         {
             var sessions = await _unitOfWork.SessionRepository.GetAllSessionsWithTrainerAndCategoryAsync(ct: ct);
 
-
             if (sessions?.Any() != true) return null;
 
-            sessions = sessions.OrderByDescending(X => X.StartDate);
-            var MappedSessions = _mapper.Map<IEnumerable<SessionViewModel>>(sessions);
+            var MappedSessions = sessions.Select(s => new SessionViewModel()
+            {
+                Id = s.Id,
+                Capacity = s.Capacity,
+                CategoryName = s.Category.CategoryName,
+                TrainerName = s.Trainer?.Name!,
+                Description = s.Description,
+                StartDate = s.StartDate,
+                EndDate = s.EndDate,
+            });
 
             foreach (var session in MappedSessions)
             {
