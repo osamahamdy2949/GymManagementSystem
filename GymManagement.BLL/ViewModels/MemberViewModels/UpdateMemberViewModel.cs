@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Gym.BLL.ViewModels.MemberViewModels
+namespace GymManagement.BLL.ViewModels.MemberViewModels
 {
     public class UpdateMemberViewModel
     {
@@ -23,7 +23,7 @@ namespace Gym.BLL.ViewModels.MemberViewModels
         [Phone(ErrorMessage = "Invalid phone number")]
         [RegularExpression(@"^(010|011|012|015)\d{8}$", ErrorMessage = "Phone number must be a valid Egyptian mobile number")]
         [DataType(DataType.PhoneNumber)]
-        public string Phone { get; set; } = default!;
+        public string PhoneNumber { get; set; } = default!;
         [Required(ErrorMessage = "Building Number Is Required")]
         [Range(1, 9000, ErrorMessage = "Building Number must be greater than 0")]
         public int BuildingNumber { get; set; }

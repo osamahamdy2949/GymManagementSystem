@@ -6,6 +6,7 @@ using GymManagement.DAL.Repositories.Classes;
 using GymManagement.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using GymManagement.BLL;
 
 namespace GymManagement
 {
@@ -22,6 +23,10 @@ namespace GymManagement
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            //Auto Mapper
+            builder.Services.AddAutoMapper(m => m.AddProfile(new MappingProfile()));
+
 
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IMemberServices, MemberServices>();

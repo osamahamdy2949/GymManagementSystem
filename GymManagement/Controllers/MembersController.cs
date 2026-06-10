@@ -2,7 +2,6 @@
 using GymManagement.BLL.Services.Classes;
 using GymManagement.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Gym.BLL.ViewModels.MemberViewModels;
 
 namespace GymManagement.PL.Controllers
 {

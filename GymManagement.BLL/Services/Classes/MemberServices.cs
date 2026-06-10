@@ -1,4 +1,4 @@
-﻿using Gym.BLL.ViewModels.MemberViewModels;
+﻿using AutoMapper;
 using GymManagement.BLL.Services.Interfaces;
 using GymManagement.BLL.ViewModels.MemberViewModels;
 using GymManagement.DAL.Data.Models;
@@ -15,40 +15,22 @@ namespace GymManagement.BLL.Services.Classes
     public class MemberServices : IMemberServices
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public MemberServices(IUnitOfWork unitOfWork)
+        public MemberServices(IUnitOfWork unitOfWork , IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public async Task<bool> CreateMembreAsync(CreateMemberViewModel member, CancellationToken ct = default)
+        public async Task<bool> CreateMembreAsync(CreateMemberViewModel model, CancellationToken ct = default)
         {
-            var existEmail = await _unitOfWork.GetRepository<Member>().AnyAsync(m => m.Email == member.Email, ct);
-            var existPhone = await _unitOfWork.GetRepository<Member>().AnyAsync(m => m.PhoneNumber == member.PhoneNumber, ct);
+            var existEmail = await _unitOfWork.GetRepository<Member>().AnyAsync(m => m.Email == model.Email, ct);
+            var existPhone = await _unitOfWork.GetRepository<Member>().AnyAsync(m => m.PhoneNumber == model.PhoneNumber, ct);
 
             if (existEmail || existPhone) return false;
 
-            var createdMember = new Member
-            {
-                Name = member.Name,
-                Email = member.Email,
-                PhoneNumber = member.PhoneNumber,
-                Gender = member.Gender,
-                DateOfBirth = member.DateOfBirth,
-                Address = new Address
-                {
-                    BuildingNumber = member.BuildingNumber,
-                    Street = member.Street,
-                    City = member.City,
-                },
-                HealthRecord = new HealthRecord()
-                {
-                    BloodType = member.HealthRecordViewModel.BloodType,
-                    Weight = member.HealthRecordViewModel.Weight,
-                    Height = member.HealthRecordViewModel.Height,
-                    Note = member.HealthRecordViewModel.Note
-                }
-            };
+            var createdMember = _mapper.Map<CreateMemberViewModel, Member>(model);
 
             _unitOfWork.GetRepository<Member>().Add(createdMember);
             var result = await _unitOfWork.SaveChangesAsync(ct);
@@ -63,15 +45,9 @@ namespace GymManagement.BLL.Services.Classes
             if (!members.Any())
                 return Enumerable.Empty<MemberViewModel>();
 
-            return members.Select(m => new MemberViewModel()
-            {
-                Id = m.Id,
-                Photo = m.Photo,
-                Name = m.Name,
-                Email = m.Email,
-                Phone = m.PhoneNumber,
-                Gender = m.Gender
-            });
+            var mappedMembers = _mapper.Map<IEnumerable<Member>,IEnumerable<MemberViewModel>>(members);
+
+            return mappedMembers;
         }
         public async Task<MemberDetailsViewModel?> GetMemberByIdAsync(int id, CancellationToken ct = default)
         {
@@ -79,17 +55,7 @@ namespace GymManagement.BLL.Services.Classes
 
             if (member == null) return null;
 
-            var model =  new MemberDetailsViewModel()
-            {
-                Photo = member.Photo,
-                Name = member.Name,
-                Email = member.Email,
-                DateOfBirth = member.DateOfBirth,
-                Phone = member.PhoneNumber,
-                Gender = member.Gender.ToString(),
-                Address = member.Address == null ? "" :
-                                            $"{member.Address.BuildingNumber} - {member.Address.Street} - {member.Address.City}"
-            };
+            var model = _mapper.Map<Member, MemberDetailsViewModel>(member);
 
             var activeMembership = await _unitOfWork.GetRepository<Membership>().FirstOrDefaultAsync(m => m.MemberId == id && m.EndDate > DateOnly.FromDateTime(DateTime.Now), false, ct);
 
@@ -110,13 +76,7 @@ namespace GymManagement.BLL.Services.Classes
 
             if (healthRecord == null) return null;
 
-            return new HealthRecordViewModel
-            {
-                BloodType = healthRecord.BloodType,
-                Weight = healthRecord.Weight,
-                Height = healthRecord.Height,
-                Note = healthRecord.Note
-            };
+            return _mapper.Map<HealthRecord, HealthRecordViewModel>(healthRecord);
         }
 
         public async Task<bool> DeleteMemberAsync(int id, CancellationToken ct = default)
@@ -138,17 +98,7 @@ namespace GymManagement.BLL.Services.Classes
             if (member is null)
                 return null;
 
-            return new UpdateMemberViewModel()
-            {
-                Id = member.Id,
-                Name = member.Name,
-                Email = member.Email,
-                Phone = member.PhoneNumber,
-                Photo = member.Photo,
-                BuildingNumber = member.Address.BuildingNumber,
-                Street = member.Address.Street,
-                City = member.Address.City
-            };
+            return _mapper.Map<Member, UpdateMemberViewModel>(member);
         }
 
         public async Task<bool> UpdateMemberAsync(int id, UpdateMemberViewModel model, CancellationToken ct = default)
@@ -159,20 +109,14 @@ namespace GymManagement.BLL.Services.Classes
                 return false;
 
             var emailExists = await _unitOfWork.GetRepository<Member>().AnyAsync(m => m.Id != id && m.Email == model.Email, ct);
-            var phoneExists = await _unitOfWork.GetRepository<Member>().AnyAsync(m => m.Id != id && m.PhoneNumber == model.Phone, ct);
+            var phoneExists = await _unitOfWork.GetRepository<Member>().AnyAsync(m => m.Id != id && m.PhoneNumber == model.PhoneNumber, ct);
 
             if (phoneExists || emailExists)
                 return false;
 
-            member.Name = model.Name;
-            member.Email = model.Email;
-            member.PhoneNumber = model.Phone;
-            member.Address = new Address()
-            {
-                BuildingNumber = model.BuildingNumber,
-                Street = model.Street,
-                City = model.City
-            };
+            _mapper.Map(model, member);
+
+            member.UpdatedAt = DateTime.Now;
 
             if (!string.IsNullOrWhiteSpace(model.Photo))
                 member.Photo = model.Photo;
