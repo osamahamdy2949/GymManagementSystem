@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GymManagement.BLL.Common;
 using GymManagement.BLL.Services.Interfaces;
 using GymManagement.BLL.ViewModels.MemberViewModels;
 using GymManagement.DAL.Data.Models;
@@ -23,19 +24,19 @@ namespace GymManagement.BLL.Services.Classes
             _mapper = mapper;
         }
 
-        public async Task<bool> CreateMembreAsync(CreateMemberViewModel model, CancellationToken ct = default)
+        public async Task<Result> CreateMemberAsync(CreateMemberViewModel model, CancellationToken ct = default)
         {
             var existEmail = await _unitOfWork.GetRepository<Member>().AnyAsync(m => m.Email == model.Email, ct);
             var existPhone = await _unitOfWork.GetRepository<Member>().AnyAsync(m => m.PhoneNumber == model.PhoneNumber, ct);
 
-            if (existEmail || existPhone) return false;
+            if (existEmail || existPhone) return Result.Validation("Email or phone number already exists");
 
             var createdMember = _mapper.Map<CreateMemberViewModel, Member>(model);
 
             _unitOfWork.GetRepository<Member>().Add(createdMember);
             var result = await _unitOfWork.SaveChangesAsync(ct);
 
-            return result > 0;
+            return result > 0 ? Result.Ok() : Result.Fail("Failed to create member");
         }
 
         public async Task<IEnumerable<MemberViewModel>> GetAllMembersAsync(CancellationToken ct = default)
@@ -79,16 +80,15 @@ namespace GymManagement.BLL.Services.Classes
             return _mapper.Map<HealthRecord, HealthRecordViewModel>(healthRecord);
         }
 
-        public async Task<bool> DeleteMemberAsync(int id, CancellationToken ct = default)
+        public async Task<Result> DeleteMemberAsync(int id, CancellationToken ct = default)
         {
             var member = await _unitOfWork.GetRepository<Member>().GetByIdAsync(id, false, ct);
             if (member is null)
-                return false;
-
+                return Result.NotFound("Member not found");
             _unitOfWork.GetRepository<Member>().Delete(member);
             var result = await _unitOfWork.SaveChangesAsync(ct);
 
-            return result > 0 ? true : false;
+            return result > 0 ? Result.Ok() : Result.Fail("Failed to delete member");
         }
 
         public async Task<UpdateMemberViewModel?> GetMemberToUpdateAsync(int id, CancellationToken ct = default)
@@ -101,18 +101,18 @@ namespace GymManagement.BLL.Services.Classes
             return _mapper.Map<Member, UpdateMemberViewModel>(member);
         }
 
-        public async Task<bool> UpdateMemberAsync(int id, UpdateMemberViewModel model, CancellationToken ct = default)
+        public async Task<Result> UpdateMemberAsync(int id, UpdateMemberViewModel model, CancellationToken ct = default)
         {
             var member = await _unitOfWork.GetRepository<Member>().GetByIdAsync(id, true, ct);
 
             if (member is null)
-                return false;
+                return Result.NotFound("Member not found");
 
             var emailExists = await _unitOfWork.GetRepository<Member>().AnyAsync(m => m.Id != id && m.Email == model.Email, ct);
             var phoneExists = await _unitOfWork.GetRepository<Member>().AnyAsync(m => m.Id != id && m.PhoneNumber == model.PhoneNumber, ct);
 
             if (phoneExists || emailExists)
-                return false;
+                return Result.Validation("Email or phone number already exists");
 
             _mapper.Map(model, member);
 
@@ -125,7 +125,7 @@ namespace GymManagement.BLL.Services.Classes
 
             var result = await _unitOfWork.SaveChangesAsync(ct);
 
-            return result > 0 ? true : false;
+            return result > 0 ? Result.Ok() : Result.Fail("Failed to update member");
         }
     }
 }

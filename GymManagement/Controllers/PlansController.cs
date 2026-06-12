@@ -54,10 +54,10 @@ namespace GymManagement.Controllers
 
             var result = await _planServices.UpdatePlanAsync(model.Id, model, ct);
 
-            if (result)
+            if (result.IsSuccess)
                 TempData["SuccessMessage"] = "Plan Updated Successfully";
             else
-                TempData["FailedMessage"] = "Failed To Update Plan";
+                TempData["FailedMessage"] = result.errorMessage;
 
             return RedirectToAction(nameof(Index));
         }
@@ -66,10 +66,10 @@ namespace GymManagement.Controllers
         public async Task<IActionResult> UpdateStatus(int id, CancellationToken ct)
         {
             var result = await _planServices.UpdateStatusAsync(id, ct);
-            if (result)
+            if (result.IsSuccess)
                 TempData["SuccessMessage"] = "Plan Status Updated Successfully";
             else
-                TempData["FailedMessage"] = "Failed To Update Plan Status";
+                TempData["FailedMessage"] = result.errorMessage;
 
             return RedirectToAction(nameof(Index));
         }

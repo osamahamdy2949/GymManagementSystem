@@ -1,4 +1,6 @@
-﻿using GymManagement.BLL.Services.Interfaces;
+﻿using AutoMapper;
+using GymManagement.BLL.Common;
+using GymManagement.BLL.Services.Interfaces;
 using GymManagement.BLL.ViewModels.MemberViewModels;
 using GymManagement.BLL.ViewModels.PlansViewModels;
 using GymManagement.DAL.Data.Models;
@@ -14,10 +16,12 @@ namespace GymManagement.BLL.Services.Classes
     public class PlanServices : IPlanServices
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public PlanServices(IUnitOfWork unitOfWork)
+        public PlanServices(IUnitOfWork unitOfWork , IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<PlanViewModel>> GetAllPlansAsync(CancellationToken ct = default)
@@ -27,16 +31,7 @@ namespace GymManagement.BLL.Services.Classes
             if (!plans.Any())
                 return Enumerable.Empty<PlanViewModel>();
 
-            return plans.Select(p => new PlanViewModel
-            {
-                Id = p.Id,
-                Name = p.Name,
-                DurationDays = p.DurationDays,
-                Description = p.Description,
-                Price = p.Price,
-                IsActive = p.IsActive
-
-            });
+            return _mapper.Map<IEnumerable<PlanViewModel>>(plans);
         }
 
         public async Task<PlanDetailsViewModel?> GetPlanByIdAsync(int id, CancellationToken ct = default)
@@ -45,14 +40,7 @@ namespace GymManagement.BLL.Services.Classes
             if (plan == null)
                 return null;
 
-            return new PlanDetailsViewModel
-            {
-                Name = plan.Name,
-                Description = plan.Description,
-                DurationDays = plan.DurationDays,
-                Price = plan.Price,
-                IsActive = plan.IsActive
-            };
+            return _mapper.Map<PlanDetailsViewModel?>(plan);
         }
 
         public async Task<UpdatePlanViewModel?> GetPlanToUpdateAsync(int id, CancellationToken ct = default)
@@ -65,48 +53,38 @@ namespace GymManagement.BLL.Services.Classes
             if (await HasActiveMembershipsAsync(id, ct))
                 return null;
 
-            return new UpdatePlanViewModel()
-            {
-                Id = plan.Id,
-                Name = plan.Name,
-                Price = plan.Price,
-                DurationDays = plan.DurationDays,
-                Description = plan.Description,
-            };
+            return _mapper.Map<UpdatePlanViewModel>(plan);
         }
 
-        public async Task<bool> UpdatePlanAsync(int id, UpdatePlanViewModel model, CancellationToken ct = default)
+        public async Task<Result> UpdatePlanAsync(int id, UpdatePlanViewModel model, CancellationToken ct = default)
         {
             var plan = await _unitOfWork.GetRepository<Plan>().GetByIdAsync(id, true, ct);
 
             if (plan is null)
-                return false;
+                return Result.NotFound("Plan not found");
 
             if(await HasActiveMembershipsAsync(id, ct))
-                return false;
+                return Result.Validation("Plan has active memberships");
 
-            plan.Id = id;
-            plan.Name = model.Name;
-            plan.DurationDays = model.DurationDays;
-            plan.Description = model.Description;
-            plan.Price = model.Price;
+            _mapper.Map(model, plan);
+
             plan.UpdatedAt = DateTime.Now;
 
             _unitOfWork.GetRepository<Plan>().Update(plan);
             var result = await _unitOfWork.SaveChangesAsync(ct);
 
-            return result > 0 ? true : false;
+            return result > 0 ? Result.Ok() : Result.Fail("Failed to update plan");
         }
 
-        public async Task<bool> UpdateStatusAsync(int id, CancellationToken ct = default)
+        public async Task<Result> UpdateStatusAsync(int id, CancellationToken ct = default)
         {
             var plan = await _unitOfWork.GetRepository<Plan>().GetByIdAsync(id, true, ct);
 
             if (plan is null)
-                return false;
+                return Result.NotFound("Plan not found");
 
             if(!plan.IsActive && await HasActiveMembershipsAsync(id, ct))
-                return false;
+                return Result.Validation("Plan has active memberships");
 
             plan.IsActive = !plan.IsActive;
             plan.UpdatedAt = DateTime.Now;
@@ -114,7 +92,7 @@ namespace GymManagement.BLL.Services.Classes
             _unitOfWork.GetRepository<Plan>().Update(plan);
             var result = await _unitOfWork.SaveChangesAsync(ct);
 
-            return result > 0 ? true : false;
+            return result > 0 ? Result.Ok() : Result.Fail("Failed to update plan status");
         }
 
         //Helper method to check if Plan has Active Membership or not

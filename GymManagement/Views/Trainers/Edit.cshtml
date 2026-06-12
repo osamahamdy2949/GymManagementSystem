@@ -1,5 +1,5 @@
 ﻿@using GymManagement.DAL.Data.Models.Enums
-@model TrainerToUpdateViewModel
+@model UpdateTrainerViewModel
 @{
     ViewData["Title"] = "Edit Trainer";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -38,11 +38,11 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label asp-for="Phone" class="form-label fw-semibold">
+                                <label asp-for="PhoneNumber" class="form-label fw-semibold">
                                     Phone Number <span class="text-danger">*</span>
                                 </label>
-                                <input asp-for="Phone" type="tel" class="form-control" />
-                                <span asp-validation-for="Phone" class="text-danger"></span>
+                                <input asp-for="PhoneNumber" type="tel" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                             </div>
                             <div class="col-md-6">
                                 <label asp-for="BuildingNumber" class="form-label fw-semibold">

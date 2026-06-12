@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GymManagement.BLL.ViewModels.TrainerViewModels
 {
-    public class TrainerToUpdateViewModel
+    public class UpdateTrainerViewModel
     {
         public int Id { get; set; }
 
@@ -21,7 +21,7 @@ namespace GymManagement.BLL.ViewModels.TrainerViewModels
         [Required]
         [RegularExpression(@"^01[0125][0-9]{8}$",
             ErrorMessage = "Invalid Egyptian phone number")]
-        public string Phone { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
 
         [Required]
         public int BuildingNumber { get; set; }

@@ -34,12 +34,12 @@ namespace GymManagement.PL.Controllers
                 return View(nameof(Create), model);
             }
 
-            var result = await _memberService.CreateMembreAsync(model, ct);
+            var result = await _memberService.CreateMemberAsync(model, ct);
 
-            if (result)
-                TempData["SuccessMessage"] = "Member Created Succefully";
+            if (result.IsSuccess)
+                TempData["SuccessMessage"] = "Member Created Successfully";
             else
-                TempData["FailedMessage"] = "Failed To Create Member";
+                TempData["FailedMessage"] = result.errorMessage;
 
             return RedirectToAction(nameof(Index));
         }
@@ -84,10 +84,10 @@ namespace GymManagement.PL.Controllers
 
             var result = await _memberService.UpdateMemberAsync(model.Id, model, ct);
 
-            if (result)
+            if (result.IsSuccess)
                 TempData["SuccessMessage"] = "Member Updated Successfully";
             else
-                TempData["FailedMessage"] = "Failed To Update Member";
+                TempData["FailedMessage"] = result.errorMessage;
 
             return RedirectToAction(nameof(Index));
         }
@@ -109,10 +109,10 @@ namespace GymManagement.PL.Controllers
         {
             var result = await _memberService.DeleteMemberAsync(id, ct);
 
-            if (result)
+            if (result.IsSuccess)
                 TempData["SuccessMessage"] = "Member Deleted Successfully";
             else
-                TempData["FailedMessage"] = "Failed To Delete Member";
+                TempData["FailedMessage"] = result.errorMessage;
 
             return RedirectToAction(nameof(Index));
         }
