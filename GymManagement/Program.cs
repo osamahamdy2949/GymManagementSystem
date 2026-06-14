@@ -7,12 +7,14 @@ using GymManagement.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using GymManagement.BLL;
+using GymManagement.DAL.Data.DataSeeding;
+using GymManagement.PL;
 
 namespace GymManagement
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -35,9 +37,9 @@ namespace GymManagement
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<ISessionRepository, SessionRepository>();
             builder.Services.AddScoped<ISessionServices, SessionServices>();
-
-
             var app = builder.Build();
+
+            await app.MigrateAndSeedDarabaseAsync();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

@@ -14,7 +14,7 @@ namespace GymManagement.DAL.Data.Configurations
                    .HasMaxLength(50);
 
             builder.Property(x => x.Description)
-                   .HasMaxLength(50);
+                   .HasMaxLength(200);
 
             builder.Property(x => x.Price)
                    .HasPrecision(10, 2);
