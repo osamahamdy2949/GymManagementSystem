@@ -19,25 +19,6 @@ namespace GymManagement.DAL.Data.Configurations
 
             base.Configure(builder);
 
-            builder.HasData(Seeder.GetMembers());
-
-            builder.OwnsOne(m => m.Address).HasData(
-                 new
-                 {
-                     MemberId = 1,
-                     Street = "El Nile St",
-                     City = "Cairo",
-                     BuildingNumber = 10
-                 },
-
-                 new
-                 {
-                     MemberId = 2,
-                     Street = "Tahrir Ave",
-                     City = "Cairo",
-                     BuildingNumber = 5
-                 }
-            );
         }
     }
 }

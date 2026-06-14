@@ -19,7 +19,6 @@ namespace GymManagement.DAL.Data.Configurations
                 tb.HasCheckConstraint("CK_Session_Dates", "StartDate < EndDate");
             });
 
-            builder.HasData(Seeder.GetSessions());
         }
     }
 }

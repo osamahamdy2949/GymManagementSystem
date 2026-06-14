@@ -20,26 +20,6 @@ namespace GymManagement.DAL.Data.Configurations
                    .HasConversion<string>();
 
             base.Configure(builder);
-            // Seed trainers
-            builder.HasData(Seeder.GetTrainers());
-
-            builder.OwnsOne(m => m.Address).HasData(
-                 new
-                 {
-                     TrainerId = 1,
-                     Street = "El Nile St",
-                     City = "Cairo",
-                     BuildingNumber = 10
-                 },
-
-                 new
-                 {
-                     TrainerId = 2,
-                     Street = "Tahrir Ave",
-                     City = "Cairo",
-                     BuildingNumber = 5
-                 }
-            );
         }
     }
 }

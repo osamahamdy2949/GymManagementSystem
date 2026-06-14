@@ -216,18 +216,6 @@ namespace GymManagement.DAL.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Categories",
-                columns: new[] { "Id", "CategoryName", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, "Cardio", null },
-                    { 2, "Strength", null },
-                    { 3, "Yoga", null },
-                    { 4, "Boxing", null },
-                    { 5, "CrossFit", null }
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_MemberId",
                 table: "Bookings",

@@ -25,7 +25,6 @@ namespace GymManagement.DAL.Data.Configurations
 
             builder.Property(h => h.BloodType).HasConversion<string>();
 
-            builder.HasData(Seeder.GetHealthRecords());
         }
     }
 }

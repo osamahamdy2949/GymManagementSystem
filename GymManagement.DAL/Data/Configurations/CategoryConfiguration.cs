@@ -19,7 +19,6 @@ namespace GymManagement.DAL.Data.Configurations
             builder.Property(c=> c.CreatedAt)
                    .HasDefaultValueSql("GETDATE()");
 
-            builder.HasData(Seeder.GetCategories());
         }
     }
 }
