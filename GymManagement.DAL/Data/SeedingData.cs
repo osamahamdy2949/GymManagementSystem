@@ -32,7 +32,7 @@ namespace GymManagement.DAL.Data
                     PhoneNumber = "01000000001",
                     DateOfBirth = DateOnly.FromDateTime(new DateTime(1990, 1, 1)),
                     Gender = Gender.Male,
-                    Speciality = Speciality.GeneralFitness
+                    Speciality = Speciality.Cardio
                 },
             new Trainer
             {

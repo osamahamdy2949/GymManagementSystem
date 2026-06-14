@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 
 namespace GymManagement.DAL.Repositories.Interfaces
 {
-    public interface ISessionRepository
+    public interface ISessionRepository : IGenericRepository<Session>
     {
         Task<IEnumerable<Session>> GetAllSessionsWithTrainerAndCategoryAsync(
                                             Expression<Func<Session, bool>>? predicate = null,
                                             CancellationToken ct = default);
 
         Task<int> GetCountOfBookedSlotsAsync(int sessionId, CancellationToken ct = default);
+
+        Task<Session?> GetSessionWithTrainerAndCategoryByIdAsync(int id, CancellationToken ct = default);
     }
 }
