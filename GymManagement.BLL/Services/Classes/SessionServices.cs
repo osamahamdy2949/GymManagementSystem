@@ -87,7 +87,7 @@ namespace GymManagement.BLL.Services.Classes
 
         public async Task<IEnumerable<CategorySelectViewModel>> GetCategoryforDropDownAsync(CancellationToken ct = default)
         {
-            var result = await _unitOfWork.GetRepository<Category>().GetAllAsync(false, ct);
+            var result = await _unitOfWork.GetRepository<Category>().GetAllAsync(ct:ct);
             return _mapper.Map<IEnumerable<CategorySelectViewModel>>(result);
         }
 
@@ -109,7 +109,7 @@ namespace GymManagement.BLL.Services.Classes
         
         public async Task<IEnumerable<TrainerSelectViewModel>> GetTrainerforDropDownAsync(CancellationToken ct = default)
         {
-            var result = await _unitOfWork.GetRepository<Trainer>().GetAllAsync(false, ct);
+            var result = await _unitOfWork.GetRepository<Trainer>().GetAllAsync(ct: ct);
             return _mapper.Map<IEnumerable<TrainerSelectViewModel>>(result);
         }
         

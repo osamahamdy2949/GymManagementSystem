@@ -25,7 +25,7 @@ namespace Gym.BLL.Sevices.Classes
         }
         public async Task<IEnumerable<TrainerViewModel>> GetAllTrainersAsync(CancellationToken ct = default)
         {
-            var trainers = await _unitOfWork.GetRepository<Trainer>().GetAllAsync(false, ct);
+            var trainers = await _unitOfWork.GetRepository<Trainer>().GetAllAsync(ct: ct);
 
             return _mapper.Map<IEnumerable<TrainerViewModel>>(trainers);
         }

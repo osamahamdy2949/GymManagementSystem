@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using GymManagement.BLL.ViewModels.BookingViewModels;
+using GymManagement.BLL.ViewModels.MembershipViewModels;
 using GymManagement.BLL.ViewModels.MemberViewModels;
 using GymManagement.BLL.ViewModels.PlansViewModels;
 using GymManagement.BLL.ViewModels.SessionViewModels;
@@ -92,12 +94,36 @@ namespace GymManagement.BLL
             CreateMap<Trainer, TrainerSelectViewModel>();
             CreateMap<Category , CategorySelectViewModel>();
         }
+
+        private void MappingMembership()
+        {
+            CreateMap<Membership, MembershipViewModel>()
+                     .ForMember(dist => dist.MemberName, Option => Option.MapFrom(Src => Src.Member.Name))
+                     .ForMember(dist => dist.PlanName, Option => Option.MapFrom(Src => Src.Plan.Name))
+                     .ForMember(dist => dist.StartDate, Option => Option.MapFrom(src => DateOnly.FromDateTime(src.CreatedAt)));
+
+            CreateMap<CreateMembershipViewModel, Membership>();
+            CreateMap<Member, MemberSelectListViewModel>();
+            CreateMap<Plan, PlanSelectListViewModel>();
+        }
+        private void MappingBook()
+        {
+            CreateMap<CreateBookingViewModel, Booking>();
+
+            CreateMap<Member , MemberSelectListViewModel>();
+
+            CreateMap<Booking, MemberForSessionViewModel>()
+                .ForMember(dest => dest.MemberName, opt => opt.MapFrom(src => src.Member.Name))
+                .ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.CreatedAt)));
+        }
         public MappingProfile()
         {
             MapppingMember();
             MappingPlan();
             MappingTrainer();
             MappingSession();
+            MappingMembership();
+            MappingBook();
         }
     }
 }

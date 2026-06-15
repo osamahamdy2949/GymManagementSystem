@@ -37,6 +37,11 @@ namespace GymManagement
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<ISessionRepository, SessionRepository>();
             builder.Services.AddScoped<ISessionServices, SessionServices>();
+            builder.Services.AddScoped<IMembershipRepository, MembershipRepository>();
+            builder.Services.AddScoped<IMembershipServices, MembershipServices>();
+            builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+            builder.Services.AddScoped<IBookingServices , BookingServices>();
+
             var app = builder.Build();
 
             await app.MigrateAndSeedDarabaseAsync();
