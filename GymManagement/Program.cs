@@ -41,6 +41,7 @@ namespace GymManagement
             builder.Services.AddScoped<IMembershipServices, MembershipServices>();
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IBookingServices , BookingServices>();
+            builder.Services.AddScoped<IAnalyticsServices, AnalyticsServices>();
 
             var app = builder.Build();
 

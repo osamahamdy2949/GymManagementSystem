@@ -62,5 +62,14 @@ namespace GymManagement.DAL.Repositories.Classes
 
             return await query.FirstOrDefaultAsync(entity => entity.Id == id, ct);
         }
+
+        public async Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken ct = default)
+        {
+            IQueryable<TEntity> query = _dbSet.AsNoTracking();
+            
+            if (predicate is not null) query = query.Where(predicate);
+            
+            return await query.CountAsync(ct);
+        }
     }
 }
