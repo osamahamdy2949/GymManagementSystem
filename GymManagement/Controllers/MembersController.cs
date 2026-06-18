@@ -2,16 +2,32 @@
 using GymManagement.BLL.Services.Classes;
 using GymManagement.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using GymManagement.BLL.Services.Attachments;
+using GymManagement.BLL.Common;
 
 namespace GymManagement.PL.Controllers
 {
     public class MembersController : Controller
     {
         private readonly IMemberServices _memberService;
+        private readonly IAttachmentServices _attachmentServices;
 
-        public MembersController(IMemberServices memberService)
+        public MembersController(IMemberServices memberService , IAttachmentServices attachmentServices)
         {
             _memberService = memberService;
+            _attachmentServices = attachmentServices;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MemberPhoto(int id)
+        {
+            var member = await _memberService.GetMemberByIdAsync(id);
+            if (member is null || string.IsNullOrWhiteSpace(member.Photo)) return NotFound();
+
+            var result = _attachmentServices.GetFile(member.Photo, "MembersPhoto");
+            if (result == null) return NotFound();
+
+            return File(result.Value.stream, result.Value.contentType);
         }
 
         //Index() - Displays member listing page

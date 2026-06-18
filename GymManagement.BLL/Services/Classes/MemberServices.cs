@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GymManagement.BLL.Common;
+using GymManagement.BLL.Services.Attachments;
 using GymManagement.BLL.Services.Interfaces;
 using GymManagement.BLL.ViewModels.MemberViewModels;
 using GymManagement.DAL.Data.Models;
@@ -17,11 +18,13 @@ namespace GymManagement.BLL.Services.Classes
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IAttachmentServices _attachmentServices;
 
-        public MemberServices(IUnitOfWork unitOfWork , IMapper mapper)
+        public MemberServices(IUnitOfWork unitOfWork , IMapper mapper , IAttachmentServices attachmentServices )
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _attachmentServices = attachmentServices;
         }
 
         public async Task<Result> CreateMemberAsync(CreateMemberViewModel model, CancellationToken ct = default)
@@ -31,12 +34,28 @@ namespace GymManagement.BLL.Services.Classes
 
             if (existEmail || existPhone) return Result.Validation("Email or phone number already exists");
 
+            var storedPhotoName =  await _attachmentServices.UploadAsync(model.PhotoFile.OpenReadStream() , model.PhotoFile.FileName , "MembersPhoto");
+            if(string.IsNullOrWhiteSpace(storedPhotoName.value))
+                return Result.Fail("Failed to upload photo");
+
             var createdMember = _mapper.Map<CreateMemberViewModel, Member>(model);
+            createdMember.Photo = storedPhotoName.value;
 
             _unitOfWork.GetRepository<Member>().Add(createdMember);
             var result = await _unitOfWork.SaveChangesAsync(ct);
 
-            return result > 0 ? Result.Ok() : Result.Fail("Failed to create member");
+            //return result > 0 ? Result.Ok() : Result.Fail("Failed to create member");
+
+            if(result > 0)
+            {
+                return Result.Ok();
+            }
+            else
+            {
+                //Delete Uploaded Photo
+                _attachmentServices.Delete(storedPhotoName.value , "MembersPhoto");
+                return Result.Fail("Failed to create member");
+            }
         }
 
         public async Task<IEnumerable<MemberViewModel>> GetAllMembersAsync(CancellationToken ct = default)

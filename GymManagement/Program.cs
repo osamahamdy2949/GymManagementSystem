@@ -9,6 +9,7 @@ using AutoMapper;
 using GymManagement.BLL;
 using GymManagement.DAL.Data.DataSeeding;
 using GymManagement.PL;
+using GymManagement.BLL.Services.Attachments;
 
 namespace GymManagement
 {
@@ -42,6 +43,7 @@ namespace GymManagement
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IBookingServices , BookingServices>();
             builder.Services.AddScoped<IAnalyticsServices, AnalyticsServices>();
+            builder.Services.AddScoped<IAttachmentServices, AttachmentServices>();
 
             var app = builder.Build();
 
