@@ -1,11 +1,13 @@
 using GymManagement.BLL.Services.Classes;
 using GymManagement.BLL.Services.Interfaces;
 using GymManagement.BLL.ViewModels.BookingViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GymManagement.PL.Controllers
 {
+    [Authorize]
     public class BookingsController : Controller
     {
         private readonly IBookingServices _bookingServices;

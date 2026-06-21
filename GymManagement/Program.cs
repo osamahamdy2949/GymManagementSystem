@@ -10,6 +10,8 @@ using GymManagement.BLL;
 using GymManagement.DAL.Data.DataSeeding;
 using GymManagement.PL;
 using GymManagement.BLL.Services.Attachments;
+using GymManagement.DAL.Data.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace GymManagement
 {
@@ -44,6 +46,13 @@ namespace GymManagement
             builder.Services.AddScoped<IBookingServices , BookingServices>();
             builder.Services.AddScoped<IAnalyticsServices, AnalyticsServices>();
             builder.Services.AddScoped<IAttachmentServices, AttachmentServices>();
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config =>
+            {
+                config.User.RequireUniqueEmail = true;
+                config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
+                config.Lockout.MaxFailedAccessAttempts = 5;
+            })
+                .AddEntityFrameworkStores<GymDbContext>();
 
             var app = builder.Build();
 
@@ -60,12 +69,13 @@ namespace GymManagement
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
+                pattern: "{controller=Account}/{action=Login}/{id?}")
                 .WithStaticAssets();
 
             app.Run();

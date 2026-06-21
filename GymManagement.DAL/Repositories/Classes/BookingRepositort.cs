@@ -25,8 +25,7 @@ namespace GymManagement.DAL.Repositories.Classes
             IQueryable<Booking> query = _dbContext.Bookings
                 .AsNoTracking()
                 .Include(b => b.Member)
-                .Where(b => b.SessionId == id)
-                ;
+                .Where(b => b.SessionId == id);
             
             return await query.ToListAsync();
         }
